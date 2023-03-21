@@ -1,21 +1,35 @@
 import Head from "next/head";
 import Image from "next/image";
-import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-import { getAllPosts } from "@/lib/notionAPI";
+import { getNumberOfPage, getPostByPage } from "@/lib/notionAPI";
 import SinglePost from "@/components/SinglePost";
-export const getStaticProps = async () => {
-  const allPosts = await getAllPosts();
+import Pagination from "@/components/Pagination";
+
+export const getStaticPaths = async () => {
+  const numberOfPage = await getNumberOfPage();
+  let params = [];
+  for (let index = 1; index < numberOfPage; index++) {
+    params.push({ params: { page: index.toString() } });
+  }
+  return {
+    paths: params,
+    fallback: "blocking", // can also be true or 'blocking'
+  };
+};
+export const getStaticProps = async (context) => {
+  const currentPage = context.params?.page;
+  const postByPage = await getPostByPage(currentPage);
+  const numberOfPage = await getNumberOfPage();
 
   return {
     props: {
-      allPosts,
+      postByPage,
+      numberOfPage,
     },
     revalidate: 60,
   };
 };
 
-export default function Home(props) {
+export default function blogPageList(props) {
   return (
     <>
       <Head>
@@ -27,7 +41,7 @@ export default function Home(props) {
       <main className="container w-full mt-16 m-auto">
         <h2 className="text-lg text-center mb-16">Notion Blog</h2>
         <ul className="flex flex-wrap gap-7">
-          {props.allPosts.map((post, index) => (
+          {props.postByPage.map((post, index) => (
             <li key={index} className="bg-white flex-1 w-1/3  shadow-md">
               <SinglePost
                 title={post.title}
@@ -39,7 +53,7 @@ export default function Home(props) {
             </li>
           ))}
         </ul>
-        <p>test</p>
+        <Pagination numberOfPage={props.numberOfPage} tag={""} />
       </main>
     </>
   );
