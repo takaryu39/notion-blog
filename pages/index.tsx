@@ -2,14 +2,17 @@ import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
-import { getAllPosts } from "@/lib/notionAPI";
+import { getAllPosts, getAllTags } from "@/lib/notionAPI";
 import SinglePost from "@/components/SinglePost";
+import Link from "next/link";
+import Tag from "@/components/Tag";
 export const getStaticProps = async () => {
   const allPosts = await getAllPosts();
-
+  const allTags = await getAllTags();
   return {
     props: {
       allPosts,
+      allTags,
     },
     revalidate: 60,
   };
@@ -28,7 +31,7 @@ export default function Home(props) {
         <h2 className="text-lg text-center mb-16">Notion Blog</h2>
         <ul className="flex flex-wrap gap-7">
           {props.allPosts.map((post, index) => (
-            <li key={index} className="bg-white flex-1 w-1/3  shadow-md">
+            <li key={index} className="bg-white w-1/3  shadow-md">
               <SinglePost
                 title={post.title}
                 description={post.description}
@@ -39,7 +42,8 @@ export default function Home(props) {
             </li>
           ))}
         </ul>
-        <p>test</p>
+        <Link href={"/post/page/1"}>もっと見る</Link>
+        <Tag allTags={props.allTags}></Tag>
       </main>
     </>
   );

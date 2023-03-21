@@ -10,10 +10,10 @@ import {
 } from "@/lib/notionAPI";
 import SinglePost from "@/components/SinglePost";
 import Pagination from "@/components/Pagination";
+import Tag from "@/components/Tag";
 
 export const getStaticPaths = async () => {
   const allTags = await getAllTags();
-  //   console.log(numberOfPageByTag);
   let params = [];
 
   await Promise.all(
@@ -36,13 +36,14 @@ export const getStaticProps = async (context) => {
 
   const posts = await getPostsByTagAndPage(currentTag, currentPage);
   const numberOfPageByTag = await getNumberOfPageByTag(currentTag);
-  //   console.log(numberOfPageByTag);
+  const allTags = await getAllTags();
 
   return {
     props: {
       posts,
       numberOfPageByTag,
       currentTag,
+      allTags,
     },
     revalidate: 60,
   };
@@ -78,6 +79,7 @@ export default function post(props) {
           numberOfPage={props.numberOfPageByTag}
           tag={props.currentTag}
         />
+        <Tag allTags={props.allTags} />
       </main>
     </>
   );

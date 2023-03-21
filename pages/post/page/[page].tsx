@@ -1,8 +1,9 @@
 import Head from "next/head";
 import Image from "next/image";
-import { getNumberOfPage, getPostByPage } from "@/lib/notionAPI";
+import { getAllTags, getNumberOfPage, getPostByPage } from "@/lib/notionAPI";
 import SinglePost from "@/components/SinglePost";
 import Pagination from "@/components/Pagination";
+import Tag from "@/components/Tag";
 
 export const getStaticPaths = async () => {
   const numberOfPage = await getNumberOfPage();
@@ -19,17 +20,19 @@ export const getStaticProps = async (context) => {
   const currentPage = context.params?.page;
   const postByPage = await getPostByPage(currentPage);
   const numberOfPage = await getNumberOfPage();
+  const allTags = await getAllTags();
 
   return {
     props: {
       postByPage,
       numberOfPage,
+      allTags,
     },
     revalidate: 60,
   };
 };
 
-export default function blogPageList(props) {
+export default function blogPageList({ postByPage, numberOfPage, allTags }) {
   return (
     <>
       <Head>
@@ -41,7 +44,7 @@ export default function blogPageList(props) {
       <main className="container w-full mt-16 m-auto">
         <h2 className="text-lg text-center mb-16">Notion Blog</h2>
         <ul className="flex flex-wrap gap-7">
-          {props.postByPage.map((post, index) => (
+          {postByPage.map((post, index) => (
             <li key={index} className="bg-white flex-1 w-1/3  shadow-md">
               <SinglePost
                 title={post.title}
@@ -53,7 +56,8 @@ export default function blogPageList(props) {
             </li>
           ))}
         </ul>
-        <Pagination numberOfPage={props.numberOfPage} tag={""} />
+        <Pagination numberOfPage={numberOfPage} tag={""} />
+        <Tag allTags={allTags}></Tag>
       </main>
     </>
   );
