@@ -46,26 +46,25 @@ function Post({ singlePost }) {
       <div className="mt-10">
         <ReactMarkdown
           className="blog-content"
-          children={singlePost.markDown}
           components={{
-            code({ node, inline, className, children, ...props }) {
+            code({ node, inline, className, children }) {
               const match = /language-(\w+)/.exec(className || "");
               return !inline && match ? (
                 <SyntaxHighlighter
-                  children={String(children).replace(/\n$/, "")}
                   style={vsDarkPlus}
                   language={match[1]}
                   PreTag="div"
-                  {...props}
-                />
+                >
+                  {String(children).replace(/\n$/, "")}
+                </SyntaxHighlighter>
               ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
+                <code className={className}>{children}</code>
               );
             },
           }}
-        ></ReactMarkdown>
+        >
+          {singlePost.markDown}
+        </ReactMarkdown>
       </div>
     </div>
   );

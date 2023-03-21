@@ -32,7 +32,7 @@ export const getStaticProps = async (context) => {
   };
 };
 
-export default function blogPageList({ postByPage, numberOfPage, allTags }) {
+export default function blogPageList(props) {
   return (
     <>
       <Head>
@@ -44,7 +44,7 @@ export default function blogPageList({ postByPage, numberOfPage, allTags }) {
       <main className="container w-full mt-16 m-auto">
         <h2 className="text-lg text-center mb-16">Notion Blog</h2>
         <ul className="flex flex-wrap gap-7">
-          {postByPage.map((post, index) => (
+          {props.postByPage.map((post, index) => (
             <li key={index} className="bg-white flex-1 w-1/3  shadow-md">
               <SinglePost
                 title={post.title}
@@ -56,8 +56,8 @@ export default function blogPageList({ postByPage, numberOfPage, allTags }) {
             </li>
           ))}
         </ul>
-        <Pagination numberOfPage={numberOfPage} tag={""} />
-        <Tag allTags={allTags}></Tag>
+        <Pagination numberOfPage={props.numberOfPage} tag={""} />
+        <Tag allTags={props.allTags}></Tag>
       </main>
     </>
   );
