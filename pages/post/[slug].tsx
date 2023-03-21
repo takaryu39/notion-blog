@@ -26,22 +26,27 @@ export const getStaticProps = async ({ params }) => {
   };
 };
 
-function Post(props) {
-  const { title, description, date, slug, tags } = props.singlePost.metaData;
+function Post({ singlePost }) {
+  const { title, description, date, slug, tags } = singlePost.metaData;
 
   return (
     <div className="container w-full m-auto">
       <h2 className="font-bold text-lg">{title}</h2>
       <div className="">{date}</div>
       <ul className="flex gap-3">
-        {tags.map((tag) => (
-          <li className="text-xs bg-slate-300 rounded-md py-1 px-3 ">{tag}</li>
+        {tags.map((tag, index) => (
+          <li
+            key={index}
+            className="text-xs bg-slate-300 rounded-md py-1 px-3 "
+          >
+            {tag}
+          </li>
         ))}
       </ul>
       <div className="mt-10">
         <ReactMarkdown
           className="blog-content"
-          children={props.singlePost.markDown}
+          children={singlePost.markDown}
           components={{
             code({ node, inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || "");
